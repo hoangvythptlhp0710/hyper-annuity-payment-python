@@ -7,7 +7,6 @@ final_output = 'The loan has been repaid!'
 print(loan_principal + '\n' + first_month + '\n' + second_month + '\n' + third_month + '\n' + final_output)
 """
 # write your code here
-import math
 
 """stage 2:
 print("Enter the loan principal: ")
@@ -42,7 +41,7 @@ elif option == 'p':
         print(str.format(f"Your monthly payment = {annualPayment} and the last payment = {lastPayment}"))
 """
 # write your code here
-
+""" stage 3: 
 import math
 
 print(
@@ -105,3 +104,52 @@ else:
     result = (loanInterest * (loanInterest + 1) ** numberOfPeriods) / ((loanInterest + 1) ** numberOfPeriods - 1)
     loanPayment = int(annuityPayment / result)
     print(str.format(f"Your loan principal = {loanPayment}", loanPayment))
+
+"""
+
+# write your code here
+""" stage 4:
+"""
+import math
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--type", type=str, required=False, help="type of payment")
+parser.add_argument("--principal", type=int, required=False, help="principal")
+parser.add_argument("--periods", type=int, required=False, help="number of periods")
+parser.add_argument("--interest", type=float, required=False, help="interest")
+parser.add_argument("--payment", type=int, required=False, help="payment")
+
+args = vars(parser.parse_args())
+
+type_ = args["type"]
+a = args["payment"]
+p = args["principal"]
+interest = args["interest"]
+n = args["periods"]
+
+if (type_ is None) or (type_ == "diff" and a is not None) or (interest is None) or (n is not None and n < 0):
+    print("Incorrect parameters")
+else:
+    i = interest / (12 * 100)
+    if type_ == "diff":
+        overpayment = p
+        for m in range(1, n + 1):
+            d1 = math.ceil(p / n + i * (p - p * (m - 1) / n))
+            overpayment -= d1
+            print(f"Month {m}: paid out {d1}")
+        print(f"\r\nOverpayment = {abs(overpayment)}")
+    elif type_ == "annuity":
+        if n is None:
+            n = math.ceil(math.log(a / (a - i * p), 1 + i))
+            years = n // 12
+            months = n % 12
+            print(f"You need {years} years and {months} months to repay this credit!")
+        elif p is None:
+            p = math.floor(a / (i / (1 - 1 / math.pow(1 + i, n))))
+            print(f"Your credit principal = {p}!")
+        else:
+            a = math.ceil(p * i / (1 - 1 / math.pow(1 + i, n)))
+            print(f"Your annuity payment = {a}!")
+        overpayment = n * a - p
+        print(f"Overpayment = {overpayment}")
